@@ -1,0 +1,18 @@
+---
+# handlers file for tester
+- name: restart dnsmasq
+  service:
+    name: dnsmasq
+    state: restarted
+
+- name: restart httpd
+  service:
+    name: httpd
+    state: restarted
+
+# - name: restart dhcpd
+#   service:
+#     name: dhcpd
+#     state: restarted
+
+

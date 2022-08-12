@@ -1,0 +1,31 @@
+apiVersion: v1
+baseDomain: {{ dns.domain }}
+compute:
+- hyperthreading: Enabled
+  architecture: {{ rhcos_arch }}
+  name: worker
+  platform: {}
+  replicas: 0
+controlPlane:
+  hyperthreading: Enabled
+  architecture: {{ rhcos_arch }}
+  name: master
+  platform: {}
+  replicas: 1
+metadata:
+  creationTimestamp: null
+  name: {{ dns.clusterid }}
+networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  networkType: {{ cni_network_provider }}
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  none: {}
+bootstrapInPlace:
+  installationDisk: {{ sno.disk }}
+sshKey: '{{ public_ssh_key }}'
+pullSecret: '{{ pull_secret }}'
+

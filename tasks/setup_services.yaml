@@ -1,0 +1,35 @@
+---
+# tasks file for config services
+  - name: Install needed packages
+    package:
+      name: "{{ packages }}"
+      state: present
+
+  - name: Remove existing config files
+    import_tasks: remove_old_config_files.yaml
+    #when: remove_old_config_files
+
+  - name: Write out dnsmasq file
+    template:
+      src: ../templates/dnsmasq.conf.j2
+      dest: /etc/dnsmasq.conf
+    notify:
+      - restart dnsmasq
+
+  - name: Set HTTP server and prepare OCP4 bios
+    block:
+    - name: Copy httpd conf file
+      copy:
+        src: ../templates/httpd.conf
+        dest: /etc/httpd/conf/httpd.conf
+      notify:
+        - restart httpd
+
+  - name: Create apache directories for installing
+    file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0755
+    with_items:
+        - /var/www/html/install
+        - /var/www/html/ignition

@@ -1,0 +1,54 @@
+---
+# tasks file for ocp4 config
+
+  - name: Skip config if install workdir exist
+    stat:
+      path: "{{ workdir }}"
+    register: dir_status
+
+  - meta: end_play
+    when: dir_status.stat.exists
+
+  - name: Setup openshift workdir
+    file:
+      path: "{{ workdir }}"
+      state: "{{ item }}"
+      mode: '0755'
+    with_items:
+  #  - absent
+    - directory
+
+  - name: Generate install-config.yaml
+    template:
+      src: ../templates/install-config.yaml.j2
+      dest: "{{ workdir }}/install-config.yaml"
+
+  - name: backup the install-config.yaml
+    copy:
+      src: "{{ workdir }}/install-config.yaml"
+      dest: "{{ workdir }}/install-config.yaml.back"
+      remote_src: yes
+      force: yes
+
+  - name: Create ignition files
+    shell: "OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ release_image_override }} openshift-install create single-node-ignition-config --log-level {{ log_level }}"
+    args:
+      chdir: "{{ workdir }}"
+
+  - name: Host ignition files
+    copy:
+      src: "{{ item }}"
+      dest: /var/www/html/ignition/
+      mode: o+r
+    with_fileglob:
+      - "{{ workdir }}/*.ign"
+
+  - name: Best effort SELinux repair - Apache
+    shell: "restorecon -vR /var/www/html || true"
+
+  - name: Add kernel args to rhcos-live.iso
+    shell: "coreos-installer iso kargs modify /usr/local/src/rhcos-live-{{ rhcos_arch }}.iso -o rhcos-live-ign.iso -a ignition.config.url=http://{{ helper.ipaddr }}:8080/ignition/bootstrap-in-place-for-live-iso.ign"
+    args:
+      chdir: "{{ workdir }}"
+
+

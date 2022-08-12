@@ -1,0 +1,30 @@
+#################################
+# DNS
+##################################
+#domain-needed
+bogus-priv
+bind-dynamic
+no-hosts
+expand-hosts
+
+interface={{ networkifacename }}
+domain={{ dns.domain | lower }}
+address=/{{ dns.clusterid }}.{{ dns.domain | lower }}/{{ sno.ipaddr }}
+server={{ dns.forwarder1 }}
+server={{ dns.forwarder2 }}
+
+##################################
+# DHCP
+##################################
+dhcp-ignore=tag:!known
+dhcp-leasefile=/var/lib/dnsmasq/dnsmasq.leases
+
+dhcp-range={{ sno.ipaddr }},static
+
+dhcp-option=option:router,{{ dhcp.router }}
+dhcp-option=option:dns-server,{{ helper.ipaddr }}
+dhcp-option=option:domain-name,{{ dns.clusterid }}.{{ dns.domain | lower }}
+dhcp-option=option:netmask,{{ dhcp.netmask }}
+dhcp-option=option:domain-search,{{ dns.domain | lower }}
+
+dhcp-host={{ sno.macaddr }},{{ dns.clusterid }}.{{ dns.domain | lower }},{{ sno.ipaddr }},infinite

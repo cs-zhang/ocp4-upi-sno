@@ -1,0 +1,5 @@
+
+- name: Remove existing named config
+  file:
+    path: /etc/dnsmasq.conf
+    state: absent

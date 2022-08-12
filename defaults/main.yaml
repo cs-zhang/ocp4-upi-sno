@@ -1,0 +1,9 @@
+---
+# defaults file
+
+workdir: ~/ocp4-sno
+rhcos_arch: ppc64le
+ocp_client_arch: ppc64le
+log_level: info
+release_image_override: ""
+cni_network_provider: OpenshiftSDN

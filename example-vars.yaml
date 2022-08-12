@@ -1,0 +1,55 @@
+---
+helper:
+  name: "helper"
+  ipaddr: "192.168.79.2"
+  #networkifacename: "env34"
+dns:
+  domain: "cloud.lab"
+  clusterid: "sno"
+  forwarder1: "9.9.9.9"
+  forwarder2: "8.8.4.4"
+dhcp:
+  router: "192.168.79.2"
+  netmask: "255.255.255.0"
+sno:
+  macaddr: "fa:4e:86:23:37:20"
+  ipaddr: "192.168.79.10"
+  disk: "/dev/sdb"
+
+force_ocp_download: true
+######################
+# URL path to RHCOS download site
+rhcos_arch: "ppc64le"
+rhcos_base_url: "https://mirror.openshift.com/pub/openshift-v4/{{ rhcos_arch }}/dependencies/rhcos"
+######################
+# RHCOS server for OCP
+# for Night build
+# rhcos_rhcos_base: "pre-release"
+# rhcos_rhcos_tag: "45.82.202006191459-0"
+# for release build
+rhcos_rhcos_base: "4.10"
+rhcos_rhcos_tag: "4.10.16"
+######################
+rhcos_iso: "{{ rhcos_base_url}}/{{ rhcos_rhcos_base }}/{{ rhcos_rhcos_tag }}/rhcos-live.{{ rhcos_arch }}.iso"
+
+########################
+# URL path to OCP clients download site
+ocp_client_arch: "ppc64le"
+ocp_base_url: "https://mirror.openshift.com/pub/openshift-v4/{{ ocp_client_arch }}/clients"
+# Client/install for OCP
+# for night build
+#ocp_client_base: "ocp-dev-preview"
+#ocp_client_tag: "4.7.0-0.nightly-ppc64le-2020-11-05-164124"
+# for release build
+ocp_client_base: "ocp"
+ocp_client_tag: "4.10.25"
+ocp_client: "{{ ocp_base_url}}/{{ ocp_client_base }}/{{ ocp_client_tag }}/openshift-client-linux.tar.gz"
+ocp_installer: "{{ ocp_base_url}}/{{ ocp_client_base }}/{{ ocp_client_tag }}/openshift-install-linux.tar.gz"
+
+#release_image_override: quay.io/openshift-release-dev/ocp-release:4.10.25-ppc64le
+
+pull_secret: '{{ lookup("file", "~/.openshift/pull-secret") | from_json | to_json }}'
+public_ssh_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+workdir: "~/ocp4-sno"
+log_level: info
