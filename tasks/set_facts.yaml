@@ -16,7 +16,7 @@
         - firewalld
         - httpd
         - bash-completion
-#        - coreos-installer
+        - coreos-installer
 
   
 - set_fact:
