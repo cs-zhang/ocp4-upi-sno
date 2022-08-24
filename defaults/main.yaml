@@ -8,3 +8,4 @@ log_level: info
 release_image_override: ""
 cni_network_provider: OVNKubernetes
 #cni_network_provider: OpenshiftSDN
+storage_type: ""

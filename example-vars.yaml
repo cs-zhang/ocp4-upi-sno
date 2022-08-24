@@ -53,3 +53,6 @@ public_ssh_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
 workdir: "~/ocp4-sno"
 log_level: info
+
+# storage_type could be: "" or "nfs"
+#storage_type: nfs

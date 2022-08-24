@@ -17,12 +17,14 @@
         - httpd
         - bash-completion
         - coreos-installer
-
+        - nfs-utils
+        - vim
   
 - set_fact:
       services:
         - dnsmasq
         - httpd
+        - nfs-server
 
 - set_fact:
       ports:
@@ -43,3 +45,8 @@
         - 50825/tcp
         - 53248/tcp
 
+# See Fedora Wiki for changes:
+# https://fedoraproject.org/wiki/Changes/RenameNobodyUser
+- set_fact:
+    owner: nobody
+    group: nobody

@@ -10,6 +10,11 @@
     name: httpd
     state: restarted
 
+- name: restart nfs
+  service:
+    name: nfs-server
+    state: restarted
+
 # - name: restart dhcpd
 #   service:
 #     name: dhcpd

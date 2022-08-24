@@ -1,0 +1,94 @@
+#!/bin/bash
+
+##################################################
+# FUNCTIONS
+##################################################
+
+##
+show_help () {
+echo "Usage:"
+echo "$(basename $0) {services|nfs-info}"
+echo ""
+}
+
+###
+services () {
+echo "Status of services:"
+echo "==================="
+for i in dnsmasq httpd; do echo -e "Status of $i svc \t\t-> $(systemctl status --no-pager $i | grep --color Active)"; done
+}
+###
+nfs-info () {
+availablesize=$(df -h --output=avail /export | tail -1 | tr -d " ""\t""[:alpha:]")
+warningsize=50
+#
+cat <<EOF
+
+An NFS server has been installed and the entire /export directory has been shared out. To set up the nfs-auto-provisioner; you just need to run the following command after "openshift-install wait-for bootstrap-complete --log-level debug" has finished...
+
+	$(basename $0) nfs-setup
+
+Thats it! Right now, this is an "opinionated" setup (there is no "how do I set this up for..."). For now, this is what you get.
+
+Once it's setup, create a PVC for the registry (an example of one has been provided)
+
+	oc create -f /usr/local/src/registry-pvc.yaml -n openshift-image-registry
+
+Check that with "oc get pv" and "oc get pvc -n openshift-image-registry".
+
+Then set the registry to use this NFS volume. (you may need to remove the emptyDir if you set it beforehand)
+
+	oc patch configs.imageregistry.operator.openshift.io cluster --type=json -p '[{"op": "remove", "path": "/spec/storage/emptyDir" }]'
+	oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"pvc":{ "claim": "registry-pvc"}}}}'
+
+
+Check the status by watching "oc get pods -n openshift-image-registry"
+
+EOF
+#
+if [ ${availablesize} -le ${warningsize} ]; then
+cat <<EOW
+
+!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!
+
+I've detected that you're using as small disk for your /export directory. OpenShift uses a LOT of storage and it's recommended to use a disk of AT LEAST 100GB. You can do one of two things...
+
+	1) Add a disk to this server and mount it on /export (RECOMMENDED)
+	2) Grow the / volume (not ideal but okay)
+
+If you proceed to use this server how it is, you void ANY chance of help from me on slack or github :)
+
+Make sure your permissions are right once you've mounted over /export (EL8 shown below, on EL7 the owner is: nfsnobody)
+
+	chown nobody:nobody /export
+	chmod 775 /export
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+EOW
+fi
+}
+##
+
+##################################################
+# MAIN SCRIPT 
+##################################################
+
+case "$1" in
+  services)
+    services
+    ;;
+  nfs-info)
+    nfs-info
+    ;;
+  nfs-setup)
+    /usr/local/bin/nfs-provisioner-setup.sh
+    ;;
+  *)
+    show_help
+    exit 1
+    ;;
+esac
+#
+exit 0
+###

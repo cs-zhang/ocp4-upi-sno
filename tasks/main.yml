@@ -41,6 +41,7 @@
   - name: Best effort SELinux repair - Apache
     shell: "restorecon -vR /var/www/html || true"
 
+
   - name: Systemd daemon reload
     systemd:
       daemon_reload: yes
