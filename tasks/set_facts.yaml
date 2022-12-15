@@ -8,6 +8,22 @@
     - set_fact:
         networkifacename: "{{ ansible_default_ipv4.interface }}"
 
+- block:
+  - set_fact:
+      registry:
+        - podman
+        - jq
+
+  - set_fact:
+      registry_services:
+        - dnsmasq
+        - firewalld
+        - local-registry
+
+  - set_fact:
+      registry_host: "registry.{{ dns.clusterid }}.{{ dns.domain | lower  }}"
+      local_registry: "registry.{{ dns.clusterid }}.{{ dns.domain | lower  }}:5000"
+      release_image: "{{ setup_registry.remote_registry | default('quay.io') }}/{{ setup_registry.product_repo }}/{{ setup_registry.release_name }}:{{ setup_registry.release_tag }}"
 
 - set_fact:
       packages:
@@ -15,6 +31,7 @@
         - bind-utils
         - firewalld
         - httpd
+        - httpd-tools
         - bash-completion
         - coreos-installer
         - nfs-utils

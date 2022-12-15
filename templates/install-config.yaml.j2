@@ -27,5 +27,23 @@ platform:
 bootstrapInPlace:
   installationDisk: {{ sno.disk }}
 sshKey: '{{ public_ssh_key }}'
+{% if setup_registry is defined and setup_registry.deploy %}
+pullSecret: '{{ lookup('file', '~/.openshift/pull-secret-updated') }}'
+additionalTrustBundle: |
+{{ lookup('file', '/opt/registry/certs/domain.crt') | indent(2, first=True) }}
+imageContentSources:
+- mirrors:
+  - {{ local_registry }}/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+  - {{ local_registry }}/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+{% else %}
 pullSecret: '{{ pull_secret }}'
-
+{% endif %}
+{% if  proxy_url is defined and proxy_url != "" %}
+proxy:
+  httpProxy: {{ proxy_url }}
+  httpsProxy: {{ proxy_url }}
+  noProxy: .{{ dns.clusterid }}.{{ dns.domain }},{{ no_proxy }}
+{% endif %}

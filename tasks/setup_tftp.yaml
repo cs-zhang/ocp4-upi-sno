@@ -1,0 +1,25 @@
+# tasks for setup tftp
+
+  - name: generate netboot entry for grub2
+    shell: grub2-mknetdir --net-directory=/var/lib/tftpboot
+
+  - name: Create TFTP RHCOS dir
+    file:
+      path: /var/lib/tftpboot/rhcos
+      state: directory
+      mode: 0755
+ 
+  - name: Generate grub2 config files
+    block:
+    - name: create grub.cfg
+      copy:
+        dest: /var/lib/tftpboot/boot/grub2/grub.cfg
+        content: |
+          default=0
+          fallback=1
+          timeout=1
+    - name: generate grub entry
+      vars:
+        mac: "{{ sno.macaddr }}"
+      include_tasks: generate_grub.yaml
+

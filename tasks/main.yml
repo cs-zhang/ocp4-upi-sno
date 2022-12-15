@@ -20,6 +20,20 @@
   - name: create ocp install files
     include: create_ocp_files.yaml
 
+  - name: setup tftp
+    include: setup_tftp.yaml
+
+  - name: Setup Local Registry
+    when: setup_registry is defined and setup_registry.deploy
+    block:
+    - name: Install registry packages
+      package:
+        name: "{{ registry }}"
+        state: present
+
+    - name: Setup Registry
+      include: setup_registry.yaml
+
   - name: Start firewalld service
     systemd:
       name: firewalld
@@ -59,5 +73,8 @@
       src: ../templates/resolv.conf.j2
       dest: /etc/resolv.conf
 
+  # - name: Netboot all the LPARs
+  #   include: netboot.yaml
+    
 
 

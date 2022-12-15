@@ -8,6 +8,9 @@
         - "/usr/local/src/openshift-client-linux.tar.gz"
         - "/usr/local/src/openshift-install-linux.tar.gz"
         - "/usr/local/src/rhcos-live-{{ rhcos_arch }}.iso"
+        - "/var/www/html/install/rootfs.img"
+        - "/var/lib/tftpboot/rhcos/initramfs.img"
+        - "/var/lib/tftpboot/rhcos/kernel"
     when: force_ocp_download
 
   - name: Downloading OCP4 rhcos-live.iso
@@ -16,6 +19,24 @@
         url: "{{ rhcos_iso }}"
         dest: "/usr/local/src/rhcos-live-{{ rhcos_arch }}.iso"
         mode: 0555
+
+  - name: Downloading OCP4 installer initramfs
+    get_url:
+      url: "{{ rhcos_initramfs }}"
+      dest: /var/lib/tftpboot/rhcos/initramfs.img
+      mode: 0555
+
+  - name: Downloading OCP4 installer kernel
+    get_url:
+      url: "{{ rhcos_kernel }}"
+      dest: /var/lib/tftpboot/rhcos/kernel
+      mode: 0555
+
+  - name: Downloading OCP4 installer rootfs
+    get_url:
+      url: "{{ rhcos_rootfs }}"
+      dest: /var/www/html/install/rootfs.img
+      mode: 0555
 
   - name: Preparing OCP client
     when: ocp_client is defined

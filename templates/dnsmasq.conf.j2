@@ -8,10 +8,16 @@ no-hosts
 expand-hosts
 
 interface={{ networkifacename }}
-domain={{ dns.domain | lower }}
-address=/{{ dns.clusterid }}.{{ dns.domain | lower }}/{{ sno.ipaddr }}
+domain={{ dns.clusterid }}.{{ dns.domain | lower }}
+local=/{{ dns.clusterid }}.{{ dns.domain | lower }}/
+address=/app.{{ dns.clusterid }}.{{ dns.domain | lower }}/{{ sno.ipaddr }}
 server={{ dns.forwarder1 }}
+{% if dns.forwarder2 is defined %}
 server={{ dns.forwarder2 }}
+{% endif %}
+
+addn-hosts=/etc/dnsmasq.d/addnhosts
+
 
 ##################################
 # DHCP
@@ -22,9 +28,17 @@ dhcp-leasefile=/var/lib/dnsmasq/dnsmasq.leases
 dhcp-range={{ sno.ipaddr }},static
 
 dhcp-option=option:router,{{ dhcp.router }}
-dhcp-option=option:dns-server,{{ helper.ipaddr }}
-dhcp-option=option:domain-name,{{ dns.clusterid }}.{{ dns.domain | lower }}
 dhcp-option=option:netmask,{{ dhcp.netmask }}
-dhcp-option=option:domain-search,{{ dns.domain | lower }}
+dhcp-option=option:dns-server,{{ helper.ipaddr }}
+#dhcp-option=option:domain-name,{{ dns.clusterid }}.{{ dns.domain | lower }}
+#dhcp-option=option:domain-search,{{ dns.domain | lower }}
 
-dhcp-host={{ sno.macaddr }},{{ dns.clusterid }}.{{ dns.domain | lower }},{{ sno.ipaddr }},infinite
+dhcp-host={{ sno.macaddr }},{{ sno.name }},{{ sno.ipaddr }},infinite
+
+
+###############################
+# PXE
+###############################
+enable-tftp
+tftp-root=/var/lib/tftpboot
+dhcp-boot=boot/grub2/powerpc-ieee1275/core.elf

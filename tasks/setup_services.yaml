@@ -9,6 +9,11 @@
     import_tasks: remove_old_config_files.yaml
     #when: remove_old_config_files
 
+  - name: Write out dnsmasq's addnhosts file
+    template:
+      src: ../templates/addnhosts.j2
+      dest: /etc/dnsmasq.d/addnhosts
+
   - name: Write out dnsmasq file
     template:
       src: ../templates/dnsmasq.conf.j2

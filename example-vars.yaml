@@ -15,6 +15,13 @@ sno:
   macaddr: "fa:4e:86:23:37:20"
   ipaddr: "192.168.79.10"
   disk: "/dev/sdb"
+  pvmcec: Server-9080-HEX-SN785EDA8
+  pvmlpar: cp4d-3-worker-1
+
+#########################
+# Run following command to add your bastion's ~/.ssh/iras.pub to HMC:
+# mkauthkeys -a "<content from your bastion's ~/.ssh/iras.pub>"
+pvm_hmc: hmc_user@hmc.host.ip  
 
 force_ocp_download: true
 ######################
@@ -27,10 +34,13 @@ rhcos_base_url: "https://mirror.openshift.com/pub/openshift-v4/{{ rhcos_arch }}/
 # rhcos_rhcos_base: "pre-release"
 # rhcos_rhcos_tag: "45.82.202006191459-0"
 # for release build
-rhcos_rhcos_base: "4.10"
-rhcos_rhcos_tag: "4.10.16"
+rhcos_rhcos_base: "4.11"
+rhcos_rhcos_tag: "latest"
 ######################
 rhcos_iso: "{{ rhcos_base_url}}/{{ rhcos_rhcos_base }}/{{ rhcos_rhcos_tag }}/rhcos-live.{{ rhcos_arch }}.iso"
+rhcos_initramfs: "{{ rhcos_base_url}}/{{ rhcos_rhcos_base }}/{{ rhcos_rhcos_tag }}/rhcos-live-initramfs.{{ rhcos_arch }}.img"
+rhcos_kernel: "{{ rhcos_base_url}}/{{ rhcos_rhcos_base }}/{{ rhcos_rhcos_tag }}/rhcos-live-kernel-{{ rhcos_arch }}"
+rhcos_rootfs: "{{ rhcos_base_url}}/{{ rhcos_rhcos_base }}/{{ rhcos_rhcos_tag }}/rhcos-live-rootfs.{{ rhcos_arch }}.img"
 
 ########################
 # URL path to OCP clients download site
@@ -42,7 +52,7 @@ ocp_base_url: "https://mirror.openshift.com/pub/openshift-v4/{{ ocp_client_arch 
 #ocp_client_tag: "4.7.0-0.nightly-ppc64le-2020-11-05-164124"
 # for release build
 ocp_client_base: "ocp"
-ocp_client_tag: "4.10.25"
+ocp_client_tag: "latest-4.11"
 ocp_client: "{{ ocp_base_url}}/{{ ocp_client_base }}/{{ ocp_client_tag }}/openshift-client-linux.tar.gz"
 ocp_installer: "{{ ocp_base_url}}/{{ ocp_client_base }}/{{ ocp_client_tag }}/openshift-install-linux.tar.gz"
 
@@ -56,3 +66,14 @@ log_level: info
 
 # storage_type could be: "" or "nfs"
 #storage_type: nfs
+
+# local registry
+setup_registry:
+  deploy: false
+  autosync_registry: false
+  #registry_image: docker.io/ppc64le/registry:2
+  registry_image: docker.io/ibmcom/registry-ppc64le:2.6.2.5
+  local_repo: "ocp4/openshift4"
+  product_repo: "openshift-release-dev"
+  release_name: "ocp-release"
+  release_tag: "4.11.20-ppc64le"

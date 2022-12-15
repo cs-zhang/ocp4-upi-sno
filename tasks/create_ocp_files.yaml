@@ -30,8 +30,10 @@
       remote_src: yes
       force: yes
 
-  - name: Create ignition files
-    shell: "OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ release_image_override }} openshift-install create single-node-ignition-config --log-level {{ log_level }}"
+  - name: Create ignition file for sno
+    shell: |
+      OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE={{ release_image_override }} openshift-install create single-node-ignition-config --log-level {{ log_level }}
+      mv bootstrap-in-place-for-live-iso.ign sno.ign
     args:
       chdir: "{{ workdir }}"
 
@@ -46,9 +48,9 @@
   - name: Best effort SELinux repair - Apache
     shell: "restorecon -vR /var/www/html || true"
 
-  - name: Add kernel args to rhcos-live.iso
-    shell: "coreos-installer iso kargs modify /usr/local/src/rhcos-live-{{ rhcos_arch }}.iso -o rhcos-live-ign.iso -a ignition.config.url=http://{{ helper.ipaddr }}:8080/ignition/bootstrap-in-place-for-live-iso.ign"
-    args:
-      chdir: "{{ workdir }}"
+  # - name: Add kernel args to rhcos-live.iso
+  #   shell: "coreos-installer iso kargs modify /usr/local/src/rhcos-live-{{ rhcos_arch }}.iso -o rhcos-live-ign.iso -a ignition.config.url=http://{{ helper.ipaddr }}:8080/ignition/bootstrap-in-place-for-live-iso.ign"
+  #   args:
+  #     chdir: "{{ workdir }}"
 
 
