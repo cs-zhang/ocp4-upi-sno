@@ -10,7 +10,7 @@ expand-hosts
 interface={{ networkifacename }}
 domain={{ dns.clusterid }}.{{ dns.domain | lower }}
 local=/{{ dns.clusterid }}.{{ dns.domain | lower }}/
-address=/app.{{ dns.clusterid }}.{{ dns.domain | lower }}/{{ sno.ipaddr }}
+address=/apps.{{ dns.clusterid }}.{{ dns.domain | lower }}/{{ sno.ipaddr }}
 server={{ dns.forwarder1 }}
 {% if dns.forwarder2 is defined %}
 server={{ dns.forwarder2 }}

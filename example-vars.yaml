@@ -12,6 +12,7 @@ dhcp:
   router: "192.168.79.2"
   netmask: "255.255.255.0"
 sno:
+  name: sno
   macaddr: "fa:4e:86:23:37:20"
   ipaddr: "192.168.79.10"
   disk: "/dev/sdb"

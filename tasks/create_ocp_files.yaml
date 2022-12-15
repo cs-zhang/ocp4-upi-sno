@@ -1,13 +1,14 @@
 ---
 # tasks file for ocp4 config
 
-  - name: Skip config if install workdir exist
-    stat:
-      path: "{{ workdir }}"
-    register: dir_status
+- name: Skip config if install workdir exist
+  stat:
+    path: "{{ workdir }}"
+  register: dir_status
 
-  - meta: end_play
-    when: dir_status.stat.exists
+- name: create the ocp ignition
+  when: not dir_status.stat.exists
+  block:
 
   - name: Setup openshift workdir
     file:
@@ -47,6 +48,16 @@
 
   - name: Best effort SELinux repair - Apache
     shell: "restorecon -vR /var/www/html || true"
+
+  - name: mkdir ~/.kube
+    file:
+      path: ~/.kube
+      state: directory
+
+  - name: Install kubeconfig
+    copy:
+      src: "{{ workdir }}/auth/kubeconfig"
+      dest: "~/.kube/config"
 
   # - name: Add kernel args to rhcos-live.iso
   #   shell: "coreos-installer iso kargs modify /usr/local/src/rhcos-live-{{ rhcos_arch }}.iso -o rhcos-live-ign.iso -a ignition.config.url=http://{{ helper.ipaddr }}:8080/ignition/bootstrap-in-place-for-live-iso.ign"

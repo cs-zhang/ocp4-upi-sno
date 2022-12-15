@@ -9,3 +9,4 @@ release_image_override: ""
 cni_network_provider: OVNKubernetes
 #cni_network_provider: OpenshiftSDN
 storage_type: ""
+node_connection_timeout: 2700
