@@ -72,8 +72,7 @@ log_level: info
 setup_registry:
   deploy: false
   autosync_registry: false
-  #registry_image: docker.io/ppc64le/registry:2
-  registry_image: docker.io/ibmcom/registry-ppc64le:2.6.2.5
+  registry_image: docker.io/library/registry:2
   local_repo: "ocp4/openshift4"
   product_repo: "openshift-release-dev"
   release_name: "ocp-release"
