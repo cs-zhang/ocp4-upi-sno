@@ -76,10 +76,19 @@
   - name: Netboot all the LPARs
     include: netboot.yaml
 
-  - name: Check connection
-    wait_for_connection:
-      delay: 15
-      connect_timeout: 15
-      timeout: "{{ node_connection_timeout }}"
-  
+  # - name: Check connection
+  #   wait_for_connection:
+  #     delay: 15
+  #     connect_timeout: 15
+  #     timeout: "{{ node_connection_timeout }}"
+
+  - name: Waiting for bootstrap completed
+    shell: "openshift_installer wait-for bootstrap-complete --log-level {{ log_level }}"
+    args:
+      chdir: "{{ workdir }}"
+
+  - name: Waiting for installation completed
+    shell: "openshift_installer wait-for install-complete --log-level {{ log_level }}"
+    args:
+      chdir: "{{ workdir }}"  
 
