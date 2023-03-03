@@ -157,11 +157,11 @@ sshKey: |
   <ssh_key> 
 ```
 Note: 
-- <domain>: Set the domain for your cluster, like `ocp.io`.
-- <cluster_id>: Set the cluster_id for your cluster, like `sno`.
-- <ssh_key>: Add the public SSH key from the administration host so that you can log in to the cluster after installation. 
-- <pull_secret>: Copy the pull secret from the Red Hat OpenShift Cluster Manager and add the contents to this configuration setting.
-- <device>: Provide the device name where the RHCOS will be installed, like `/dev/sda` or `/dev/disk/by-id/scsi-36005076d0281005ef000000000026803`.
+- `<domain>`: Set the domain for your cluster, like `ocp.io`.
+- `<cluster_id>`: Set the cluster_id for your cluster, like `sno`.
+- `<ssh_key>`: Add the public SSH key from the administration host so that you can log in to the cluster after installation. 
+- `<pull_secret>`: Copy the pull secret from the Red Hat OpenShift Cluster Manager and add the contents to this configuration setting.
+- `<device>`: Provide the device name where the RHCOS will be installed, like `/dev/sda` or `/dev/disk/by-id/scsi-36005076d0281005ef000000000026803`.
 
 Download the `openshift-install`:
 ```shell
