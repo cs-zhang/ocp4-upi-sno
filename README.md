@@ -14,6 +14,8 @@ To do the SNO installation, we need two VMs, one works as bastion and another on
 The `bastion` is used to setup required services and require to be able to run as root. The SNO node need o have the static IP assigned with internet access.
 
 ## Bastion setup
+The bastion's `SELINUX` has to be set to `permissive` mode, otherwise ansible playbook will fail, to do it open file `/etc/selinux/config` and set `SELINUX=permissive`.
+
 We will use PXE for SNO installation, that requires the following services to be configured and run:
 - DNS -- to define `api`, `api-int` and `*.apps` 
 - DHCP -- to enable PXE and assign IP to SNO node

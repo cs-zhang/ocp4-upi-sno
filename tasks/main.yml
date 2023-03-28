@@ -83,12 +83,12 @@
   #     timeout: "{{ node_connection_timeout }}"
 
   - name: Waiting for bootstrap completed
-    shell: "openshift_installer wait-for bootstrap-complete --log-level {{ log_level }}"
+    shell: "openshift-install wait-for bootstrap-complete --log-level {{ log_level }}"
     args:
       chdir: "{{ workdir }}"
 
   - name: Waiting for installation completed
-    shell: "openshift_installer wait-for install-complete --log-level {{ log_level }}"
+    shell: "openshift-install wait-for install-complete --log-level {{ log_level }}"
     args:
       chdir: "{{ workdir }}"  
 
