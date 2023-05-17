@@ -35,7 +35,7 @@ rhcos_base_url: "https://mirror.openshift.com/pub/openshift-v4/{{ rhcos_arch }}/
 # rhcos_rhcos_base: "pre-release"
 # rhcos_rhcos_tag: "45.82.202006191459-0"
 # for release build
-rhcos_rhcos_base: "4.11"
+rhcos_rhcos_base: "4.13"
 rhcos_rhcos_tag: "latest"
 ######################
 rhcos_iso: "{{ rhcos_base_url}}/{{ rhcos_rhcos_base }}/{{ rhcos_rhcos_tag }}/rhcos-live.{{ rhcos_arch }}.iso"
@@ -53,7 +53,7 @@ ocp_base_url: "https://mirror.openshift.com/pub/openshift-v4/{{ ocp_client_arch 
 #ocp_client_tag: "4.7.0-0.nightly-ppc64le-2020-11-05-164124"
 # for release build
 ocp_client_base: "ocp"
-ocp_client_tag: "latest-4.11"
+ocp_client_tag: "latest-4.13"
 ocp_client: "{{ ocp_base_url}}/{{ ocp_client_base }}/{{ ocp_client_tag }}/openshift-client-linux.tar.gz"
 ocp_installer: "{{ ocp_base_url}}/{{ ocp_client_base }}/{{ ocp_client_tag }}/openshift-install-linux.tar.gz"
 

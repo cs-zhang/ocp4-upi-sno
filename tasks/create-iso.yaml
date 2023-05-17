@@ -1,0 +1,94 @@
+---
+# Setup OCP SNO Helper Node
+
+- hosts: all
+  vars_files:
+    - ../defaults/main.yaml
+  handlers:
+  - import_tasks: ../handlers/main.yml
+    
+  tasks:
+  - name: Set setup facts
+    include: set_facts.yaml
+
+  - name: Setup required services
+    include: setup_services.yaml
+
+  - name: setup tftp
+    include: setup_tftp.yaml
+
+  - name: Download OCP files
+    include: download_files.yaml
+
+  - name: create ocp install files
+    include: create_ocp_files.yaml
+
+  - name: Setup Local Registry
+    when: setup_registry is defined and setup_registry.deploy
+    block:
+    - name: Install registry packages
+      package:
+        name: "{{ registry }}"
+        state: present
+
+    - name: Setup Registry
+      include: setup_registry.yaml
+
+  - name: Start firewalld service
+    systemd:
+      name: firewalld
+      state: started
+      enabled: yes
+
+  - name: Open up firewall ports
+    firewalld:
+      permanent: yes
+      immediate: yes
+      state: enabled
+      port: "{{ item[0] }}"
+    delegate_to: "{{ item[1] }}"
+    run_once: true
+    with_nested:
+      - "{{ ports }}"
+      - "{{ ansible_play_batch }}"
+
+  - name: Best effort SELinux repair - Apache
+    shell: "restorecon -vR /var/www/html || true"
+
+
+  - name: Systemd daemon reload
+    systemd:
+      daemon_reload: yes
+
+  - name: Starting services
+    service:
+      name: "{{ item }}"
+      enabled: yes
+      state: started
+    with_items:
+      - "{{ services }}"
+
+  - name: Set the local resolv.conf file
+    template:
+      src: ../templates/resolv.conf.j2
+      dest: /etc/resolv.conf
+
+  # - name: Netboot all the LPARs
+  #   include: netboot.yaml
+
+  # - name: Check connection
+  #   wait_for_connection:
+  #     delay: 15
+  #     connect_timeout: 15
+  #     timeout: "{{ node_connection_timeout }}"
+
+  # - name: Waiting for bootstrap completed
+  #   shell: "openshift-install wait-for bootstrap-complete --log-level {{ log_level }}"
+  #   args:
+  #     chdir: "{{ workdir }}"
+
+  # - name: Waiting for installation completed
+  #   shell: "openshift-install wait-for install-complete --log-level {{ log_level }}"
+  #   args:
+  #     chdir: "{{ workdir }}"  
+

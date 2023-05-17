@@ -60,11 +60,13 @@
       dest: "~/.kube/config"
 
   - name: embed the ignition file to rhcos-live.iso
+    when: rhcos_iso is defined
     shell: "coreos-installer iso ignition embed /usr/local/src/rhcos-live-{{ rhcos_arch }}.iso -o rhcos-live-ign.iso -fi sno.ign"
     args:
       chdir: "{{ workdir }}"
 
   # - name: Add kernel args to rhcos-live.iso
+  #   when: rhcos_iso is defined
   #   shell: "coreos-installer iso kargs modify /usr/local/src/rhcos-live-{{ rhcos_arch }}.iso -o rhcos-live-http-ign.iso -a ignition.config.url=http://{{ helper.ipaddr }}:8080/ignition/sno.ign"
   #   args:
   #     chdir: "{{ workdir }}"
