@@ -13,12 +13,12 @@
         - "/var/lib/tftpboot/rhcos/kernel"
     when: force_ocp_download
 
-  # - name: Downloading OCP4 rhcos-live.iso
-  #   when: rhcos_iso is defined
-  #   get_url:
-  #       url: "{{ rhcos_iso }}"
-  #       dest: "/usr/local/src/rhcos-live-{{ rhcos_arch }}.iso"
-  #       mode: 0555
+  - name: Downloading OCP4 rhcos-live.iso
+    when: rhcos_iso is defined
+    get_url:
+        url: "{{ rhcos_iso }}"
+        dest: "/usr/local/src/rhcos-live-{{ rhcos_arch }}.iso"
+        mode: 0555
 
   - name: Downloading OCP4 installer initramfs
     get_url:
