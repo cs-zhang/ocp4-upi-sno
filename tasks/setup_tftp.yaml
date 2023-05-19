@@ -23,3 +23,12 @@
         mac: "{{ sno.macaddr }}"
       include_tasks: generate_grub.yaml
 
+  # fix the lpar_netboot failed to get PXE files under SELinux
+  - name: Sel file label to tftpdir_rw_t
+    shell: |
+      semanage fcontext -a -t tftpdir_rw_t "/var/lib/tftpboot(/.*)?"
+      semanage fcontext -a -t tftpdir_rw_t "/var/lib/tftpboot/boot(/.*)?"
+      semanage fcontext -a -t tftpdir_rw_t "/var/lib/tftpboot/boot/grub2(/.*)?"
+      semanage fcontext -a -t tftpdir_rw_t "/var/lib/tftpboot/boot/grub2/powerpc-ieee1275(/.*)?"
+      restorecon -R -v /var/lib/tftpboot
+      cp /var/lib/tftpboot/boot/grub2/powerpc-ieee1275/grub.cfg /var/lib/tftpboot/boot/grub2/powerpc-ieee1275/grub.cfg-0
