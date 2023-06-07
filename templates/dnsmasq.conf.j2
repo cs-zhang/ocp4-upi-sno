@@ -35,6 +35,9 @@ dhcp-option=option:dns-server,{{ helper.ipaddr }}
 
 dhcp-host={{ sno.macaddr }},{{ sno.name }},{{ sno.ipaddr }},infinite
 
+{% if day2_worker is defined %}
+dhcp-host={{ day2_worker.macaddr }},{{ day2_worker.name | lower }},{{ day2_worker.ipaddr }},infinite
+{% endif %}
 
 ###############################
 # PXE

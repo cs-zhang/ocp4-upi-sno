@@ -39,6 +39,7 @@
       chdir: "{{ workdir }}"
 
   - name: Host ignition files
+    become: true
     copy:
       src: "{{ item }}"
       dest: /var/www/html/ignition/
@@ -47,6 +48,7 @@
       - "{{ workdir }}/*.ign"
 
   - name: Best effort SELinux repair - Apache
+    become: true
     shell: "restorecon -vR /var/www/html || true"
 
   - name: mkdir ~/.kube
@@ -59,9 +61,9 @@
       src: "{{ workdir }}/auth/kubeconfig"
       dest: "~/.kube/config"
 
-  - name: embed the ignition file to rhcos-live.iso
+  - name: embed the ignition file to rhcos-sno-ign.iso
     when: rhcos_iso is defined
-    shell: "coreos-installer iso ignition embed /usr/local/src/rhcos-live-{{ rhcos_arch }}.iso -o rhcos-live-ign.iso -fi sno.ign"
+    shell: "coreos-installer iso ignition embed /usr/local/src/rhcos-live-{{ rhcos_arch }}.iso -o rhcos-sno-ign.iso -fi sno.ign"
     args:
       chdir: "{{ workdir }}"
 

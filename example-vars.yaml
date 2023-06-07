@@ -15,9 +15,18 @@ sno:
   name: sno
   macaddr: "fa:4e:86:23:37:20"
   ipaddr: "192.168.79.10"
-  disk: "/dev/sdb"
+  disk: "/dev/sda"
   pvmcec: Server-9080-HEX-SN785EDA8
   pvmlpar: cp4d-3-worker-1
+
+# add worker node to a exist SNO cluster
+# day2-worker:
+#   name: sno-worker
+#   macaddr: "fa:4e:86:23:37:20"
+#   ipaddr: "192.168.79.10"
+#   disk: "/dev/sda"
+#   pvmcec: Server-9080-HEX-SN785EDA8
+#   pvmlpar: cp4d-3-worker-2
 
 #########################
 # Run following command to add your bastion's ~/.ssh/iras.pub to HMC:

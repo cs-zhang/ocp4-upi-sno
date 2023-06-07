@@ -1,0 +1,59 @@
+---
+# Setup OCP SNO Helper Node
+
+- hosts: all
+  vars_files:
+    - ../defaults/main.yaml
+  handlers:
+  - import_tasks: ../handlers/main.yml
+    
+  tasks:
+  - name: Set setup facts
+    include: set_facts.yaml
+
+  - name: Setup required services
+    become: true
+    include: setup_services.yaml
+
+  - name: setup tftp
+    become: true
+    include: setup_tftp.yaml
+
+  - name: create ocp ignition for worker
+    environment:
+      KUBECONFIG: "{{ workdir }}/auth/kubeconfig"
+    shell: |
+      oc extract -n openshift-machine-api secret/worker-user-data-managed --keys=userData --to=- > day2-worker.ign
+      sudo cp day2-worker.ign /var/www/html/ignition/.
+    args:
+      chdir: "{{ workdir }}"
+
+  - name: embed the ignition file to rhcos-worker-ign.iso
+    when: rhcos_iso is defined
+    shell: "coreos-installer iso ignition embed /usr/local/src/rhcos-live-{{ rhcos_arch }}.iso -o rhcos-worker-ign.iso -fi day2-worker.ign"
+    args:
+      chdir: "{{ workdir }}"
+
+  - name: Copy first-boot-ppc64le.ign to /www/html/ignition
+    become: true
+    vars:
+      disk: "{{ day2_worker.disk }}"
+    template:
+      src: ../templates/first-boot-ppc64le.ign.j2
+      dest: "/var/www/html/ignition/first-boot-day2-ppc64le.ign"
+
+  - name: Best effort SELinux repair - Apache
+    become: true
+    shell: "restorecon -vR /var/www/html || true"
+
+  - name: Netboot all the LPARs
+    include: netboot.yaml
+
+  - name: Monitor the install progress
+    environment:
+      KUBECONFIG: "{{ workdir }}/auth/kubeconfig"
+    include: day2-csr.yaml
+
+
+
+

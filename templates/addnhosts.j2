@@ -1,4 +1,6 @@
 {{ helper.ipaddr }} registry
 {{ sno.ipaddr }} {{ sno.name }} api api-int
-
+{% if day2_worker is defined %}
+{{ day2_worker.ipaddr }} {{ day2_worker.name | lower }}
+{% endif %}
 

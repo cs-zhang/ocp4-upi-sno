@@ -1,0 +1,11 @@
+- hosts: all
+  vars_files:
+    - ../defaults/main.yaml
+  handlers:
+  - import_tasks: ../handlers/main.yml
+
+  tasks:
+  - name: Monitor the install progress
+    environment:
+      KUBECONFIG: "{{ workdir }}/auth/kubeconfig"
+    include: day2-csr.yaml

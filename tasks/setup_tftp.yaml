@@ -11,6 +11,11 @@
  
   - name: Generate grub2 config files
     block:
+    - set_fact:
+        install_url: "http://{{ helper.ipaddr }}:8080/install"
+        ignition_url: "http://{{ helper.ipaddr }}:8080/ignition"
+        coreos_inst_url: "coreos.live.rootfs_url=http://{{ helper.ipaddr }}:8080/install/rootfs.img"
+
     - name: create grub.cfg
       copy:
         dest: /var/lib/tftpboot/boot/grub2/grub.cfg
@@ -18,9 +23,20 @@
           default=0
           fallback=1
           timeout=1
+    
     - name: generate grub entry
       vars:
+        ignition: "sno.ign"
         mac: "{{ sno.macaddr }}"
+        mdisk: "{{ sno.disk }}"
+      include_tasks: generate_grub.yaml
+
+    - name: generate grub entry for day2_worker
+      when: day2_worker is defined
+      vars:
+        ignition: "day2-worker.ign"
+        mac: "{{ day2_worker.macaddr }}"
+        mdisk: "{{ day2_worker.disk }}"
       include_tasks: generate_grub.yaml
 
   # fix the lpar_netboot failed to get PXE files under SELinux

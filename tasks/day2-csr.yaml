@@ -1,0 +1,35 @@
+---
+- name: Wait for bootstrap CSR request
+  shell: |
+    oc get csr | awk '/node-bootstrapper.*Pending/ { print $1 }'
+  register: csrName
+  until: (csrName.stdout_lines | length) != 0
+  retries: 60
+  delay: 30
+
+- name: Approve bootstrap CSR
+  shell: |
+    oc adm certificate approve "{{ item }}"
+  loop: "{{ csrName.stdout_lines | flatten }}"
+
+- name: Wait for node CSR request
+  shell: |
+     oc get csr | awk  '/worker.*Pending/ { print $1 }'
+  register: nodeCsrName
+  until:  nodeCsrName.stdout_lines|length == 1
+  delay: 30
+  retries: 60
+
+- name: Approve node CSR
+  shell: |
+    oc adm certificate approve "{{ item }}"
+  loop: "{{ nodeCsrName.stdout_lines | flatten}}"
+
+- name: Ensure all hosts added to OS cluster
+  shell: |
+    oc get node "{{ day2_worker.name }}" --no-headers
+  register: cluster_nodes
+  until:
+  - '" Ready " in cluster_nodes.stdout'
+  retries: 30
+  delay: 30
