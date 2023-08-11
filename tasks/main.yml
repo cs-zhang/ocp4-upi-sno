@@ -29,10 +29,11 @@
     include: download_files.yaml
 
   - name: Setup Local Registry
-    become: true
+    #become: true
     when: setup_registry is defined and setup_registry.deploy
     block:
     - name: Install registry packages
+      become: true
       package:
         name: "{{ registry }}"
         state: present

@@ -2,6 +2,7 @@
 # tasks file for configure-local-registry
 
 - name: Create registry directories
+  become: true
   file:
     path: /opt/registry/{{ item }}
     state: directory
@@ -12,11 +13,13 @@
 
 - name: Generate an OpenSSL private key with the default values (4096 bits, RSA)
   run_once: true
+  become: true
   openssl_privatekey:
     path: /opt/registry/certs/domain.pem
 
 - name: Generate an OpenSSL Certificate Signing Request
   run_once: true
+  become: true
   openssl_csr:
     path: /opt/registry/certs/domain.csr
     privatekey_path: /opt/registry/certs/domain.pem
@@ -27,6 +30,7 @@
 
 - name: Generate a Self Signed OpenSSL certificate
   run_once: true
+  become: true
   openssl_certificate:
     path: /opt/registry/certs/domain.crt
     privatekey_path: /opt/registry/certs/domain.pem
@@ -35,11 +39,13 @@
 
 - name: Create the user and password for local registry
   run_once: true
+  become: true
   shell: htpasswd -bBc /opt/registry/auth/htpasswd {{ setup_registry.registry_user | default('admin') }} {{ setup_registry.registry_password | default('admin') }}
   args:
     creates: /opt/registry/auth/htpasswd
 
 - name: Copy Self Signed OpenSSL certificate
+  become: true
   copy:
     src: /opt/registry/certs/domain.crt
     dest: /etc/pki/ca-trust/source/anchors/domain.crt
@@ -47,6 +53,7 @@
     force: yes
 
 - name: Add the Self Signed OpenSSL certificate to your list of trusted certificates
+  become: true
   shell: |
     update-ca-trust || true
     cat /etc/pki/tls/certs/ca-bundle.trust.crt | grep {{ registry_host }} | wc -l
@@ -56,12 +63,14 @@
   delay: 10
 
 - name: Generate local-registry service file
+  become: true
   template:
     src: ../templates/local-registry.service.j2
     dest: /etc/systemd/system/local-registry.service
     mode: 0655
 
 - name: Start local-registry
+  become: true
   systemd:
     name: local-registry
     state: started
@@ -69,6 +78,7 @@
     daemon_reload: yes
 
 - name: Ensure registry pod is up
+  become: true
   shell: podman ps | grep local-registry
   register: pod_state
   until: pod_state.stdout != ""
@@ -76,6 +86,7 @@
   delay: 15
 
 - name: Allow traffic at local registry port
+  become: true
   firewalld:
     port: 5000/tcp
     permanent: yes
@@ -85,7 +96,8 @@
   - internal
   - public
 
-- name: Restarting regitry services
+- name: Restarting registry services
+  become: true
   service:
     name: "{{ item }}"
     state: restarted
@@ -128,5 +140,5 @@
     shell: "sed -i '1,/Success/d' ../postrun-local-registry-info"
 
   - name: Mirror NFS image (ppc64le)
-    when: setup_registry.autosync_registry and ocp_client_arch == ppc64le
+    when: setup_registry.autosync_registry and ocp_client_arch == "ppc64le"
     shell: "oc image mirror docker.io/ibmcom/nfs-client-provisioner-ppc64le:latest registry.{{ dns.clusterid }}.{{ dns.domain }}:5000/nfs-client-provisioner-ppc64le:latest -a ~/.openshift/pull-secret-updated"
