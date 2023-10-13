@@ -1,0 +1,27 @@
+---
+# Setup OCP SNO Helper Node
+
+- hosts: all
+  vars_files:
+    - ../defaults/main.yaml
+  handlers:
+  - import_tasks: ../handlers/main.yml
+    
+  tasks:
+
+  - name: Set setup facts
+    include: set_facts.yaml
+
+  - name: Netboot all the LPARs
+    include: netboot.yaml
+
+  - name: Waiting for bootstrap completed
+    shell: "openshift-install wait-for bootstrap-complete --log-level {{ log_level }}"
+    args:
+      chdir: "{{ workdir }}"
+
+  - name: Waiting for installation completed
+    shell: "openshift-install wait-for install-complete --log-level {{ log_level }}"
+    args:
+      chdir: "{{ workdir }}"  
+

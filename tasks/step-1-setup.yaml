@@ -89,16 +89,5 @@
   - name: create ocp install files
     include: create_ocp_files.yaml
 
-  - name: Netboot all the LPARs
-    include: netboot.yaml
 
-  - name: Waiting for bootstrap completed
-    shell: "openshift-install wait-for bootstrap-complete --log-level {{ log_level }}"
-    args:
-      chdir: "{{ workdir }}"
-
-  - name: Waiting for installation completed
-    shell: "openshift-install wait-for install-complete --log-level {{ log_level }}"
-    args:
-      chdir: "{{ workdir }}"  
 
