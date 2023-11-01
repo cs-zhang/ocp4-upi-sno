@@ -76,15 +76,15 @@
     service:
       name: "{{ item }}"
       enabled: yes
-      state: started
+      state: restarted
     with_items:
       - "{{ services }}"
 
-  # - name: Set the local resolv.conf file
-  #   become: true
-  #   template:
-  #     src: ../templates/resolv.conf.j2
-  #     dest: /etc/resolv.conf
+  - name: Set the local resolv.conf file
+    become: true
+    template:
+      src: ../templates/resolv.conf.j2
+      dest: /etc/resolv.conf
 
   - name: create ocp install files
     include: create_ocp_files.yaml
