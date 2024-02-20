@@ -9,15 +9,15 @@
     
   tasks:
   - name: Set setup facts
-    include: set_facts.yaml
+    include_tasks: set_facts.yaml
 
   - name: Setup required services
-    become: true
-    include: setup_services.yaml
+    #become: true
+    include_tasks: setup_services.yaml
 
   - name: setup tftp
-    become: true
-    include: setup_tftp.yaml
+    #become: true
+    include_tasks: setup_tftp.yaml
 
   - name: create ocp ignition for worker
     environment:
@@ -47,12 +47,12 @@
     shell: "restorecon -vR /var/www/html || true"
 
   - name: Netboot all the LPARs
-    include: netboot.yaml
+    include_tasks: netboot.yaml
 
   - name: Monitor the install progress
     environment:
       KUBECONFIG: "{{ workdir }}/auth/kubeconfig"
-    include: day2-csr.yaml
+    include_tasks: day2-csr.yaml
 
 
 

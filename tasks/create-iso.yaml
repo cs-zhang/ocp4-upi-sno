@@ -9,19 +9,19 @@
     
   tasks:
   - name: Set setup facts
-    include: set_facts.yaml
+    include_tasks: set_facts.yaml
 
   - name: Setup required services
-    include: setup_services.yaml
+    include_tasks: setup_services.yaml
 
   - name: setup tftp
-    include: setup_tftp.yaml
+    include_tasks: setup_tftp.yaml
 
   - name: Download OCP files
-    include: download_files.yaml
+    include_tasks: download_files.yaml
 
   - name: create ocp install files
-    include: create_ocp_files.yaml
+    include_tasks: create_ocp_files.yaml
 
   - name: Setup Local Registry
     when: setup_registry is defined and setup_registry.deploy
@@ -32,7 +32,7 @@
         state: present
 
     - name: Setup Registry
-      include: setup_registry.yaml
+      include_tasks: setup_registry.yaml
 
   - name: Start firewalld service
     systemd:
@@ -74,7 +74,7 @@
       dest: /etc/resolv.conf
 
   # - name: Netboot all the LPARs
-  #   include: netboot.yaml
+  #   include_tasks: netboot.yaml
 
   # - name: Check connection
   #   wait_for_connection:

@@ -6,7 +6,7 @@
     
   tasks:
   - name: Set setup facts
-    include: set_facts.yaml
+    include_tasks: set_facts.yaml
 
   - name: Check connection
     wait_for_connection:

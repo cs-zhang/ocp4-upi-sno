@@ -17,15 +17,15 @@
     include_tasks: set_facts.yaml
 
   - name: Setup required services
-    become: true
+    #become: true
     include_tasks: setup_services.yaml
 
   - name: setup tftp
-    become: true
+    #become: true
     include_tasks: setup_tftp.yaml
 
   - name: Download OCP files
-    become: true
+    #become: true
     include_tasks: download_files.yaml
 
   - name: Setup Local Registry

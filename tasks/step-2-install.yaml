@@ -10,10 +10,10 @@
   tasks:
 
   - name: Set setup facts
-    include: set_facts.yaml
+    include_tasks: set_facts.yaml
 
   - name: Netboot all the LPARs
-    include: netboot.yaml
+    include_tasks: netboot.yaml
 
   - name: Waiting for bootstrap completed
     shell: "openshift-install wait-for bootstrap-complete --log-level {{ log_level }}"
